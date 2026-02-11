@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birthday Wishes</title>
+
+<!-- Handwriting Font -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Georgia', serif;
+    text-align: center;
+    overflow: hidden;
+    color: #333;
+    background: rgb(255, 200, 200);
+    transition: background 1s linear;
+}
+
+h1 {
+    margin-top: 40px;
+    color: white;
+    text-shadow: 2px 2px 5px black;
+}
+
+/* Letter Box */
+.letter-box {
+    width: 500px;
+    margin: 40px auto;
+    padding: 30px;
+    border: 3px solid white;
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    transition: 0.5s, box-shadow 0.5s;
+}
+
+.letter-box:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(255,255,255,0.8);
+}
+
+.letter-box.open {
+    box-shadow: 0 0 40px rgba(255,255,255,0.9);
+}
+
+.hidden {
+    display: none;
+}
+
+.letter-content {
+    text-align: left;
+    line-height: 1.6;
+    font-family: 'Dancing Script', cursive;
+    font-size: 22px;
+    color: #000080; /* sky blue-ish */
+}
+
+/* Confetti */
+.confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: #ff0;
+    pointer-events: none;
+    opacity: 0.8;
+    border-radius: 50%;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Birthday wises from Muthuselvem</h1>
+
+<div class="letter-box" id="letterBox" onclick="openLetter()">
+    <div id="closedText"><b>✉️ Click Here to Open Your Birthday Letter 🎂</b></div>
+    <div id="openText" class="hidden letter-content"></div>
+</div>
+
+<!-- Birthday Music -->
+<audio id="birthdayMusic">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// Animate soft colorful background
+function randomColor() {
+    const r = Math.floor(Math.random() * 156 + 100);
+    const g = Math.floor(Math.random() * 156 + 100);
+    const b = Math.floor(Math.random() * 156 + 100);
+    return `rgb(${r},${g},${b})`;
+}
+
+let currentColor = randomColor();
+let nextColor = randomColor();
+let step = 0;
+
+function animateBackground() {
+    step += 0.003;
+    if(step >= 1){
+        step = 0;
+        currentColor = nextColor;
+        nextColor = randomColor();
+    }
+
+    const c1 = currentColor.match(/\d+/g).map(Number);
+    const c2 = nextColor.match(/\d+/g).map(Number);
+
+    const r = Math.floor(c1[0] + (c2[0]-c1[0])*step);
+    const g = Math.floor(c1[1] + (c2[1]-c1[1])*step);
+    const b = Math.floor(c1[2] + (c2[2]-c1[2])*step);
+
+    document.body.style.background = `rgb(${r},${g},${b})`;
+    requestAnimationFrame(animateBackground);
+}
+
+animateBackground();
+
+// Confetti particles
+const confettis = [];
+for(let i=0;i<100;i++){
+    const conf = document.createElement("div");
+    conf.classList.add("confetti");
+    conf.style.left = Math.random()*window.innerWidth + "px";
+    conf.style.top = Math.random()*window.innerHeight + "px";
+    conf.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 70%)`;
+    conf.style.width = conf.style.height = (Math.random()*8+4) + "px";
+    document.body.appendChild(conf);
+    confettis.push({
+        el: conf,
+        x: parseFloat(conf.style.left),
+        y: parseFloat(conf.style.top),
+        dx: (Math.random()-0.5)*2,
+        dy: Math.random()*2+1,
+        rot: Math.random()*360
+    });
+}
+
+function animateConfetti(){
+    confettis.forEach(c=>{
+        c.x += c.dx;
+        c.y += c.dy;
+        if(c.y>window.innerHeight) c.y = -10;
+        c.el.style.left = c.x + "px";
+        c.el.style.top = c.y + "px";
+        c.rot += 2;
+        c.el.style.transform = `rotate(${c.rot}deg)`;
+    });
+    requestAnimationFrame(animateConfetti);
+}
+animateConfetti();
+
+function openLetter(){
+    const names = ["Priya", "Arjun", "Meena", "Karthik", "Divya"];
+    const randomName = names[Math.floor(Math.random() * names.length)];
+
+    document.getElementById("closedText").style.display="none";
+
+    const letter = `
+    Dear ${randomName},<br><br>
+    Wishing you a very Happy Birthday! 🎉<br><br>
+    May your special day be filled with happiness, laughter, and wonderful memories.<br><br>
+    Stay blessed, keep smiling, and continue shining brightly.<br><br>
+    With warm wishes,<br>
+    <b>Muthuselvem</b>
+    `;
+
+    const openText = document.getElementById("openText");
+    openText.innerHTML = letter;
+    openText.classList.remove("hidden");
+
+    document.getElementById("letterBox").classList.add("open");
+
+    document.getElementById("birthdayMusic").play();
+}
+</script>
+
+</body>
+</html>
